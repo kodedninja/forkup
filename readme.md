@@ -14,10 +14,10 @@ update('dat://b89507488b68892978dcdc6cb32e21040b2cd0fdcd304c502e17289aad10d95e/'
 ```
 
 ## usage
-Add a ```version.txt``` file to your site's root folder that uses semver and then call forked whenever you want.
+Add a ```version.txt``` file to your site's root folder that uses any kind of lexicographic order versioning and then call forked whenever you want.
 
 I usually add an ```/update``` route to my Choo pages that calls this method.
 
-# api
+## api
 ### ```forkup(dat_url, files)```
-Updates every file in ```files``` if the version is less then the version at ```dat_url```.
+Updates every file in ```files``` if the version is less then the version at ```dat_url``` (the URL of the upstream site).
