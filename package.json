@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/kodedninja/forkup/issues"
   },
-  "homepage": "https://github.com/kodedninja/forkup#readme"
+  "homepage": "https://github.com/kodedninja/forkup#readme",
+  "dependencies": {
+    "parse-dat-url": "^3.0.1"
+  }
 }

@@ -1,11 +1,13 @@
+const parse = require('parse-dat-url')
+
 module.exports = function forkup(source, files) {
 	var upstream, archive
 
-	try {
-		archive = new DatArchive(window.location.origin + '/')
+	const fork_url = parse(window.location.href)
+
+	if (fork_url.protocol == 'dat:' || fork_url.protocol == 'workspace:') {
+		archive = new DatArchive(fork_url.origin + '/')
 		try_update()
-	} catch (e) {
-		// not Beaker
 	}
 
 	async function try_update() {
@@ -14,22 +16,37 @@ module.exports = function forkup(source, files) {
 	}
 
 	async function update() {
+		const fork_json = await get_package_json(archive)
+
+		if (fork_json.update) source = fork_json.update.url || source
+
 		upstream = new DatArchive(source)
+		const upstream_json = await get_package_json(upstream)
 
-		try {
-			var cver = await archive.readFile('/version.txt')
-			var over = await upstream.readFile('/version.txt')
-
-			if (over > cver) {
-				files.map(update_file)
-				archive.writeFile('/version.txt', over)
-			} else {
-				console.log('Already at latest version.')
+		if (fork_json && upstream_json) {
+			if (fork_json.version >= upstream_json.version) {
+				console.log('Already using the latest version.')
+				return
 			}
-		} catch (e) {
-			console.error('No version.txt file found.')
-		}
 
+			if (upstream_json.update) files = upstream_json.update.files || files
+
+			files.map(update_file)
+
+			fork_json.version = upstream_json.version
+			await archive.writeFile('/package.json', JSON.stringify(fork_json, null, '  '))
+		}
+	}
+
+	async function get_package_json(archive) {
+		try {
+			var json = await archive.readFile('/package.json')
+			json = JSON.parse(json)
+			return json
+		} catch (e) {
+			console.error("There's no valid package.json in the root directory of " + archive.url)
+			return null
+		}
 	}
 
 	async function update_file(file) {
