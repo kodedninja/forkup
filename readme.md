@@ -43,6 +43,14 @@ Add an ```"update"``` field to your ```package.json``` (located in the root fold
 
 I usually add an ```/update``` route to my Choo pages that calls this method. [See in solo](https://github.com/kodedninja/solo/blob/master/src/index.js#L57).
 
+Alternatively you can use the ```check``` and ```update``` functions separately.
+
 ## api
 ### ```forkup([dat_url, files])```
 Parameters required only if not using ```package.json```. Updates every file in ```files``` if the version is less then the version at ```dat_url``` (the URL of the upstream site).
+
+### ```check([dat_url])```
+Parameter required only if not using ```package.json```. Checks if update is available. If yes returns an ```Array```, else ```false```.
+
+### ```update(archives, [files])```
+```files``` is only required if not using ```package.json```. ```archives``` is the output of ```check```. Does the update.
